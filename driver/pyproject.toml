@@ -3,10 +3,11 @@ name = "elephant-driver"
 version = "0.1.0"
 description = "Drivers for the 'elephant' machine"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.10,<3.11"
 dependencies = [
     "pymycobot==4.0.4",
-    "numpy==2.4.3",
+    "ros-rclpy==9.1.2",
+    "numpy==2.2.6",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.12.0",
     "python-dotenv>=1.2.1",

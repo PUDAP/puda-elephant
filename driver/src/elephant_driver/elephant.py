@@ -31,6 +31,12 @@ class Elephant:
             raise e
         
     # arm methods
+    def get_angles(self):
+        """Get the current joint angles of the robot in degrees."""
+        angles = self.arm.get_angles()
+        logging.log(logging.INFO, "Current joint angles: %s", angles)
+        return angles
+
     def get_coords(self):
         """Get the current coordinates of the robot."""
         coords = self.arm.get_coords()
