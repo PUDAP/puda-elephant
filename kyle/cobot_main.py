@@ -28,7 +28,7 @@ OPTIMIZED_IMAGE_PATH = os.path.join(SCRIPT_DIR, "optimized.jpg")
 DEBUG_IMAGE_PATH = os.path.join(SCRIPT_DIR, "debug_vlm_pick.jpg")
 
 MODEL = "openai/gpt-5-image"
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 MOVE_SPEED = 800
 WAIT_DONE_TIMEOUT = 120.0
