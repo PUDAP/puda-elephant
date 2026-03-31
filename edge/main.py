@@ -9,7 +9,7 @@ import logging
 import sys
 import time
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from qubot_drivers.machines import Elephant
+from elephant_driver import Elephant
 from puda_comms import EdgeNatsClient, EdgeRunner
 
 
@@ -19,13 +19,15 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     force=True,
 )
-logging.getLogger("qubot_drivers").setLevel(logging.WARNING)
+logging.getLogger("elephant_driver").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 # Environment configuration
 class Config(BaseSettings):
     machine_id: str
     nats_servers: str
+    elephant_ip: str
+    elephant_port: int
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -53,9 +55,7 @@ async def main():
     logger.info("Full config: %s", config.model_dump())
 
     logger.info("Initializing machine driver")
-    driver = Elephant(
-    )
-    driver.startup()
+    driver = Elephant(ip=config.elephant_ip, port=config.elephant_port)
     logger.info("Elephant machine initialized successfully")
 
     logger.info("Connecting to NATS at %s", config.nats_servers)
@@ -66,14 +66,14 @@ async def main():
 
     async def telemetry_handler():
         await edge_nats_client.publish_heartbeat()
-        await edge_nats_client.publish_position(await driver.get_position())
+        await edge_nats_client.publish_position(await driver.get_coords())
         await edge_nats_client.publish_health({"cpu": 45.2, "mem": 60.1, "temp": 35.0})
 
     runner = EdgeRunner(
         nats_client=edge_nats_client,
         machine_driver=driver,
         telemetry_handler=telemetry_handler,
-        state_handler=lambda: {"deck": driver.deck.to_dict()},
+        state_handler=lambda: {},
     )
     await runner.connect()
     logger.info("NATS client initialized successfully")
